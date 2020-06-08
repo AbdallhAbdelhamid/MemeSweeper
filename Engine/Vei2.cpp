@@ -57,3 +57,4 @@ int Vei2::GetLengthSq() const
 {
 	return x * x + y * y;
 }
+

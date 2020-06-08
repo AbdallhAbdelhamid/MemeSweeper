@@ -23,6 +23,8 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
+#include "Minefield.h"
+
 
 class Game
 {
@@ -43,4 +45,9 @@ private:
 	/********************************/
 	/*  User Variables              */
 	/********************************/
+	Minefield minefield;
+	bool rMouseReleased = true;
+	bool lMouseReleased = true;
+
+	int tilePressed;
 };

@@ -21,6 +21,7 @@
 #include "MainWindow.h"
 #include "Game.h"
 
+
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
@@ -38,8 +39,49 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	
+	if(!minefield.GetGameStatus() )
+	{
+
+	if (wnd.mouse.LeftIsPressed() || wnd.mouse.RightIsPressed())
+	{
+		const Vei2 mousePos(wnd.mouse.GetPosX(), wnd.mouse.GetPosY());
+		tilePressed = minefield.GetTilePressed(mousePos);
+
+		if (tilePressed != -1 && lMouseReleased && wnd.mouse.LeftIsPressed())
+		{
+			minefield.setTile(tilePressed, TileState::Reaveled);
+			minefield.SetNBombs();
+			minefield.CheckAround(tilePressed);
+			lMouseReleased = false;
+		}
+		if (tilePressed != -1  && rMouseReleased&& wnd.mouse.RightIsPressed())
+		{			
+			minefield.setTile(tilePressed, TileState::Flagged);
+			rMouseReleased = false;
+		}
+
+
+	}
+
+	if (!wnd.mouse.RightIsPressed())
+	{
+		rMouseReleased = true;
+	}
+
+	if (!wnd.mouse.LeftIsPressed())
+	{
+		lMouseReleased = true;
+	}
+	minefield.CheckGame();
+	
+
+}
+
 }
 
 void Game::ComposeFrame()
 {
+	minefield.DrawTiles(gfx);
 }
+
