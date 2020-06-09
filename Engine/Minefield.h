@@ -61,7 +61,7 @@ private:
 
 	};
 
-	static constexpr int width = 350; 
+	static constexpr int width = 100; 
 	static constexpr int height = width;
 	
 	static constexpr int nRowTile = width / SpriteCodex::tileSize ;
