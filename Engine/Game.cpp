@@ -51,7 +51,6 @@ void Game::UpdateModel()
 		if (tilePressed != -1 && lMouseReleased && wnd.mouse.LeftIsPressed())
 		{
 			minefield.setTile(tilePressed, TileState::Reaveled);
-//			minefield.SetNBombs();
 			minefield.CheckAround(tilePressed);
 			lMouseReleased = false;
 		}
@@ -60,7 +59,6 @@ void Game::UpdateModel()
 			minefield.setTile(tilePressed, TileState::Flagged);
 			rMouseReleased = false;
 		}
-
 
 	}
 
@@ -73,6 +71,7 @@ void Game::UpdateModel()
 	{
 		lMouseReleased = true;
 	}
+
 	minefield.CheckGame();
 	
 
@@ -82,6 +81,9 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	minefield.DrawTiles(gfx);
+	if (!Minefield::win)
+	{
+		minefield.DrawTiles(gfx);
+	}
 }
 

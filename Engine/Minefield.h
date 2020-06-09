@@ -30,7 +30,6 @@ private:
 	{
 	public:
 
-//		Minefield& minefieldd;
 		static bool StopPlay;
 		Tile(Vei2 pos_in);
 		Tile();
@@ -45,8 +44,6 @@ private:
 		bool IsMouseIn(const Vei2& mousePos_in)const;
 		void setNBombs();
 		
-
-
 	public:
 		static constexpr int height = 14;
 		static constexpr int width = 14;
@@ -64,22 +61,30 @@ private:
 
 	};
 
-	static constexpr int width = 300; 
-	static constexpr int height = 300;
+	static constexpr int width = 70; 
+	static constexpr int height = width;
 	
 	static constexpr int nRowTile = width / SpriteCodex::tileSize ;
 	static constexpr int nColTile = height / SpriteCodex::tileSize ;
 	static constexpr int nTiles = nColTile * nRowTile;
 
+	static constexpr int nMines = nTiles/5;
+	static constexpr int nFlags = nMines;
+
+	static int  nCurFlags;
+	static int nFlaggedMines;
+	static constexpr int padding = 10;
+	static constexpr int x_off = 200;
+	static constexpr int y_off = 150;
+
 	std::array<int, nRowTile - 2> top;
 	std::array<int, nRowTile - 2> bot;
 	std::array<int, nColTile - 2> right;
 	std::array<int, nColTile - 2> left;
-
+	bool gameOver = false;
 	Tile tiles[nTiles];
 
-
-
+	
 public:
 
 	Minefield();
@@ -89,23 +94,17 @@ public:
 	void CheckGame();
 	bool GetGameStatus()const;
 	void CheckAround(int index);
-
-public:
+	static int win;
 
 
 private:
 	void SetNBombs();
 	NearTiles GetAroundTiles(int tileIndex);
-	bool Belongs(int index, std::array<int, nRowTile - 2>);
-	static constexpr int nMines = 20;
-	static constexpr int padding = 10;
-	static constexpr int x_off = 200;
-	static constexpr int y_off = 150;
-	bool gameOver = false;
+	bool Belongs(int index, const std::array<int, nRowTile - 2>& array)const;
+
 	std::random_device rd;
 	std::mt19937 rng;
 	std::uniform_int_distribution<int> mineDist;
-
 
 
 };

@@ -2,7 +2,9 @@
 
 
 bool Minefield::Tile::StopPlay = false;
-
+int Minefield::nCurFlags = 0;
+int Minefield::win = false;
+int Minefield::nFlaggedMines = 0;
 
 Minefield::Minefield()
 	:
@@ -23,7 +25,7 @@ Minefield::Minefield()
 
 	}
 
-	for (int i = 0; i < 50; i++)
+	for (int i = 0; i < nMines ; i++)
 	{
 		int x;
 		do
@@ -33,7 +35,6 @@ Minefield::Minefield()
 		tiles[x].SetBomb();
 
 	}
-
 
 	int x = 0;
 	for (int i = 0 ; i < nRowTile - 2 ; i++ )
@@ -93,14 +94,16 @@ void Minefield::Tile::SetState(TileState state_in)
 			state = TileState::Reaveled;
 		}
 
-		else if (state == TileState::Unreavled && state_in == TileState::Flagged )
+		else if (state == TileState::Unreavled && state_in == TileState::Flagged && nCurFlags < nFlags )
 		{
-			state = TileState::Flagged;			
+			state = TileState::Flagged;		
+			nCurFlags++;
 		}
 
 		else if (state == TileState::Flagged && state_in == TileState::Flagged)
 		{
 			state = TileState::Unreavled;
+			nCurFlags--;
 		}
 
 		else if (state == TileState::Flagged && state_in == TileState::Reaveled && StopPlay )
@@ -114,6 +117,7 @@ void Minefield::Tile::SetState(TileState state_in)
 
 void Minefield::CheckGame()
 {
+	int test = 0;
 	for (Tile& tile : tiles)
 	{
 		if (tile.CheckBomb() && tile.GetState() == TileState::Reaveled)
@@ -129,6 +133,25 @@ void Minefield::CheckGame()
 			tile.SetState(TileState::Reaveled);
 		}
 	}
+
+	for (Tile& tile : tiles)
+	{
+		if (tile.CheckBomb() && tile.GetState() == TileState::Flagged)
+		{
+			nFlaggedMines++;
+		}
+
+		if (tile.GetState() == TileState::Reaveled || tile.drawNum )
+		{
+			test++;
+		}
+	}
+
+	if (nCurFlags == nMines && test == nTiles - nMines)
+	{
+		win = true;
+	}
+
 }
 
 bool Minefield::GetGameStatus() const
@@ -144,8 +167,6 @@ bool Minefield::Tile::CheckBomb() const
 
 void Minefield::Tile::DrawTile(Graphics& gfx)
 {
-
-
 	{
 		if (!drawNum && !hasBomb || (hasBomb && state == TileState::Unreavled) || (hasBomb && state == TileState::Flagged))
 		{
@@ -164,7 +185,7 @@ void Minefield::Tile::DrawTile(Graphics& gfx)
  
 			}
 		}
-		else if (drawNum == true && !hasBomb || (hasBomb && state == TileState::Unreavled) || (hasBomb && state == TileState::Flagged))
+		else if (drawNum == true && !hasBomb ||  ( (hasBomb && state == TileState::Unreavled) || (hasBomb && state == TileState::Flagged) ) )
 
 		{
 			switch (this->nBombs)
@@ -367,7 +388,6 @@ void Minefield::SetNBombs()
 		 nearTiles.tiles_index[3] = tileIndex - 1;
 	 }
 
-//	 else if (tileIndex > 0 && tileIndex < 3)
 	 else if (Belongs(tileIndex,top))
 	 {
 		 nearTiles.tiles_index[3] = tileIndex - 1;
@@ -378,7 +398,6 @@ void Minefield::SetNBombs()
 		 nearTiles.tiles_index[7] = tileIndex + nRowTile + 1;
 	 }
 
-//	 else if (tileIndex > 12 && tileIndex < 15)
 	 else if (Belongs(tileIndex, bot))
 
 	 {
@@ -390,7 +409,6 @@ void Minefield::SetNBombs()
 		 nearTiles.tiles_index[4] = tileIndex + 1;
 	 }
 
-//	 else if(tileIndex == 4 || tileIndex == 8 )	 
 	 else if (Belongs(tileIndex, left))
 
 	 {
@@ -403,7 +421,6 @@ void Minefield::SetNBombs()
 		 nearTiles.tiles_index[7] = tileIndex + nRowTile + 1;
 	 }
 
-//	 else if (tileIndex == 7 || tileIndex ==11 )
 	 else if (Belongs(tileIndex, right))
 
 	 {
@@ -441,7 +458,7 @@ void Minefield::SetNBombs()
 	 return nearTiles;
 }
 
-bool Minefield::Belongs(int index_in , std::array<int, nRowTile - 2>array )
+bool Minefield::Belongs(int index_in ,const std::array<int, nRowTile - 2>& array )const
 {
 	for (int index : array)
 	{
