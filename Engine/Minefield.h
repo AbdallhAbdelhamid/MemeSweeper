@@ -5,6 +5,7 @@
 #include "SpriteCodex.h"
 #include "RectI.h"
 #include <random>
+#include <array>
 
 
 enum class TileState
@@ -29,6 +30,8 @@ private:
 	{
 	public:
 
+//		Minefield& minefieldd;
+		static bool StopPlay;
 		Tile(Vei2 pos_in);
 		Tile();
 		Vei2 GetPos() const;
@@ -61,17 +64,17 @@ private:
 
 	};
 
-	static constexpr int width = 70; 
-	static constexpr int height = 70;
+	static constexpr int width = 300; 
+	static constexpr int height = 300;
 	
 	static constexpr int nRowTile = width / SpriteCodex::tileSize ;
 	static constexpr int nColTile = height / SpriteCodex::tileSize ;
 	static constexpr int nTiles = nColTile * nRowTile;
 
-	int top[nRowTile - 2];
-	int bot[nRowTile - 2];
-	int right[nColTile - 2];
-	int left[nColTile - 2];
+	std::array<int, nRowTile - 2> top;
+	std::array<int, nRowTile - 2> bot;
+	std::array<int, nColTile - 2> right;
+	std::array<int, nColTile - 2> left;
 
 	Tile tiles[nTiles];
 
@@ -82,21 +85,18 @@ public:
 	Minefield();
 	void DrawTiles(Graphics& gfx);
 	int GetTilePressed(const Vei2& mousePos);
-	void setTile(const int& index, const TileState& state_in);
+	void setTile(int index, const TileState& state_in);
 	void CheckGame();
 	bool GetGameStatus()const;
-	void CheckAround(const int& index);
-
-	void SetNBombs();
+	void CheckAround(int index);
 
 public:
 
 
 private:
-
-
-	NearTiles GetAroundTiles(const int& tileIndex);
-
+	void SetNBombs();
+	NearTiles GetAroundTiles(int tileIndex);
+	bool Belongs(int index, std::array<int, nRowTile - 2>);
 	static constexpr int nMines = 20;
 	static constexpr int padding = 10;
 	static constexpr int x_off = 200;

@@ -51,7 +51,7 @@ void Game::UpdateModel()
 		if (tilePressed != -1 && lMouseReleased && wnd.mouse.LeftIsPressed())
 		{
 			minefield.setTile(tilePressed, TileState::Reaveled);
-			minefield.SetNBombs();
+//			minefield.SetNBombs();
 			minefield.CheckAround(tilePressed);
 			lMouseReleased = false;
 		}
